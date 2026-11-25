@@ -1,56 +1,53 @@
-"use client"
-import { useEffect } from "react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-export default function Admin(){
-    const router = useRouter()
-    const [orders,setOrders]=useState([])
-const checkAdminStatus = async () => {
-    try {
-      const res = await fetch("/api/me");
-      const data = await res.json();
-      if(data.success){
-        setIsadmin(true)
-      }else{
-        router.push("/login")
-      }
-    } catch (err) {
-      setIsAdmin(false);
-    }
-  };
-async function fetchorder(){
-  const data =await fetch("/api/order")
-  const gokgok = await data.json()
+"use client";
 
-  if(gokgok.success){
-setOrders(data.orders)
-  }else{
-    alert("no order found")
+import { useEffect, useState } from "react";
+
+export default function Admin() {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  async function fetchOrder() {
+    try {
+      const res = await fetch("/api/order");
+      const gokgok = await res.json();
+
+      if (gokgok.success) {
+        setOrders(gokgok.orders || []);
+      } else {
+        alert("No order found");
+      }
+    } catch (error) {
+      console.error("Order fetch error:", error);
+    } finally {
+      setLoading(false);
+    }
   }
-}
+
   useEffect(() => {
-    checkAdminStatus();
-    fetchorder()
+    fetchOrder();
   }, []);
 
-    
+  if (loading) {
+    return <div>Loading orders...</div>;
+  }
 
-    return(
-        <div>
-            hello admin how are are you
+  return (
+    <div>
+      <h2>Hello admin, how are you?</h2>
 
-
-            <div>
-{orders.map((item)=>(
-<div key={item.id}>
-<h1>{item.name}</h1>
-<h1>{item.area}</h1>
-<h1>{item.phone}</h1>
-
-</div>
-))}
-
+      <div>
+        {orders.length === 0 ? (
+          <p>No orders available.</p>
+        ) : (
+          orders.map((item) => (
+            <div key={item._id || item.id}>
+              <h1>{item.name}</h1>
+              <h1>{item.area}</h1>
+              <h1>{item.phone}</h1>
             </div>
-        </div>
-    )
+          ))
+        )}
+      </div>
+    </div>
+  );
 }
