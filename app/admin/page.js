@@ -1,5 +1,4 @@
 "use client"
-<<<<<<< HEAD
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 export default function Admin(){
@@ -32,11 +31,8 @@ setOrders(data.orders)
     checkAdminStatus();
     fetchorder()
   }, []);
-=======
 
-export default function Admin(){
     
->>>>>>> 4d41084183bc0a0485c416a4c8f3d52bcd88c8b4
 
     return(
         <div>
