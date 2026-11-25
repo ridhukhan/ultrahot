@@ -64,7 +64,7 @@ if(!name || !area || !phone){
     }
   }
     return (
-    <div style={{backgroundColor:"#0b3626",width:"100%",height:"auto",justifyContent:"center",alignItems:"center",textAlign:"center"}}>
+    <div style={{backgroundColor:"#458b00",width:"100%",height:"auto",justifyContent:"center",alignItems:"center",textAlign:"center"}}>
      
 <img
 src="/ling1.jpg"
@@ -73,7 +73,7 @@ alt="lingo compare"
 style={
   {
     width:"80%",
-    height:"50vh",
+    height:"30vh",
     justifyContent:"center",
     marginTop:"25px",
     borderRadius:"15px"
