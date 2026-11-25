@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
 export default function AdminLogin() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -23,15 +22,15 @@ export default function AdminLogin() {
       const data = await res.json()
 
       if (data.success) {
-        toast.success("লগইন সফল হয়েছে!")
+        alert("লগইন সফল হয়েছে!")
         router.push("/admin")
         router.refresh()
       } else {
-        toast.error(data.message || "লগইন ব্যর্থ হয়েছে!")
+        alert(data.message || "লগইন ব্যর্থ হয়েছে!")
       }
     } catch (err) {
       console.error("Login fetch error:", err)
-      toast.error("সার্ভারে সমস্যা হয়েছে!")
+      alert("সার্ভারে সমস্যা হয়েছে!")
     } finally {
       setLoading(false)
     }
