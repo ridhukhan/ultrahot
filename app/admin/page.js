@@ -57,7 +57,7 @@ export default function Admin() {
     setFraudResult(null);
 
     try {
-      const res = await fetch("/api/pathao-fraud", {
+      const res = await fetch("/api/pathao_fraud", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone: targetPhone }),
