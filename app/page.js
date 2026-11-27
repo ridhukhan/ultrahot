@@ -4,694 +4,793 @@ import { BsLightningCharge } from "react-icons/bs";
 import { GrSecure } from "react-icons/gr";
 import { TbTruckDelivery } from "react-icons/tb";
 import { CiCircleCheck } from "react-icons/ci";
-import { FaChessKing } from "react-icons/fa";
+import { FaChessKing, FaPen, FaStopwatch } from "react-icons/fa";
 import { GiSelfLove } from "react-icons/gi";
 import { FaHourglassStart } from "react-icons/fa6";
-import { FaPen } from "react-icons/fa6";
-import { FaStopwatch } from "react-icons/fa";
 import { SlCalender } from "react-icons/sl";
 import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import ViewCounter from "./ViewCounter";
+
 export default function Home() {
+  const router = useRouter();
+  const orderFormRef = useRef(null);
 
-  const orderFormRef =useRef(null)
-
-  const scroll =()=>{
-orderFormRef.current?.scrollIntoView({
+  const scroll = () => {
+    orderFormRef.current?.scrollIntoView({
       behavior: "smooth",
-      block: "center", 
+      block: "center",
     });
-  }
+  };
 
+  const [name, setName] = useState("");
+  const [area, setArea] = useState("");
+  const [phone, setPhone] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const price = 1250;
 
-  const [name,setName]=useState("")
-  const [area,setArea]=useState("")
-  const [phone,setPhone]=useState("")
-  const [quantity,setQuantity]=useState(1)
-  const [loading,setLoading]=useState(false)
-const price=1250
-  const handle=async(e)=>{
-    e.preventDefault()
+  const handle = async (e) => {
+    e.preventDefault();
+
+    if (!name.trim() || !area.trim() || !phone.trim()) {
+      toast.error("দয়া করে আপনার নাম, ঠিকানা এবং মোবাইল নাম্বার পূরণ করুন!");
+      return;
+    }
+
     try {
-      setLoading(true)
-if(!name || !area || !phone){
-  return alert(
-    "plz all filed are required"
-  )
+      setLoading(true);
+      const totalPrice = quantity * price;
+      const orderData = {
+        name,
+        area,
+        phone,
+        quantity,
+        price: totalPrice,
+      };
 
-}
-      const orderData={
-        name,area,phone,quantity,price:quantity*price
-      }
-      const res =await fetch("/api/order",{
-         method: "POST",
+      const res = await fetch("/api/order", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderData),
-      })
+      });
 
-      const resdata = await res.json()
-      if(resdata.success){
-         alert("অর্ডার সফল হয়েসে")
-         setArea("")
-         setPhone("")
-         setName("")
-      }else{
-        alert("server error")
+      const resdata = await res.json();
 
+      if (resdata.success) {
+        toast.success("অভিনন্দন! আপনার অর্ডারটি সফলভাবে গৃহীত হয়েছে 🎉");
+
+        // Thank You পেজে ডাটা পাঠানোর জন্য URL Query ব্যবহার করা হলো
+        const params = new URLSearchParams({
+          name,
+          area,
+          phone,
+          quantity: quantity.toString(),
+          price: totalPrice.toString(),
+        });
+
+        setArea("");
+        setPhone("");
+        setName("");
+
+        setTimeout(() => {
+          router.push(`/thank-you?${params.toString()}`);
+        }, 1200);
+      } else {
+        toast.error("সার্ভার সমস্যার কারণে অর্ডার সম্পন্ন হয়নি। আবার চেষ্টা করুন।");
       }
     } catch (error) {
-      alert("whole server problem pound")
-    }finally{
-      setLoading("")
+      toast.error("নেটওয়ার্ক সমস্যা! দয়া করে কিছুক্ষণ পর আবার চেষ্টা করুন।");
+    } finally {
+      setLoading(false);
     }
-  }
-    return (
-    <div style={{backgroundColor:"#D8BFD8",width:"100%",height:"auto",justifyContent:"center",alignItems:"center",textAlign:"center"}}>
-     <ViewCounter />
-<img
-src="/ling1.jpg"
+  };
 
-alt="lingo compare"
-style={
-  {
-    width:"80%",
-    height:"30vh",
-    justifyContent:"center",
-    marginTop:"25px",
-    borderRadius:"15px"
-  }
-}
-/>
-<h3 style={{color:"yellow",justifyContent:"center",alignItems:"center",
-   textAlign:"center",marginTop:"10px",
-   backgroundColor:"#0e9931",marginLeft:"35%",marginRight:"35%",borderRadius:"25%",padding:"5px"}}>
-১০০% ন্যাচারাল
-</h3>
-<h1 style={{color:"yellow",marginTop:"10px",fontFamily:"fangsong"}}>ULTRA HOT</h1>
-<p>মালেশিয়ান প্রযুক্তিতে তৈরি (100% Original)</p>
-<p style={{marginTop:"20px"}}>হতাশাকে বলুন বিদায়! আধুনিক মালেশিয়ান প্রযুক্তিতে তৈরি ু আলট্রা হট ক্যাপসুল আপনাকে দেবে হারানো যৌবন এবং অফুরন্ত এনার্জি।</p>
+  return (
+    <div style={styles.pageWrapper}>
+      {/* গ্লোবাল অ্যানিমেশন ও স্ক্রলিং CSS */}
+      <style>{`
+        @keyframes scrollLeft {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        @keyframes pulseBtn {
+          0%, 100% { transform: scale(1); box-shadow: 0 10px 25px rgba(245, 158, 11, 0.45); }
+          50% { transform: scale(1.03); box-shadow: 0 14px 32px rgba(245, 158, 11, 0.65); }
+        }
+        .cta-btn {
+          animation: pulseBtn 2s infinite ease-in-out;
+          transition: all 0.25s ease;
+        }
+        .cta-btn:hover {
+          filter: brightness(1.06);
+        }
+      `}</style>
 
-<div style={{flexDirection:"column",marginTop:"20px",}}>
-  <div style={{flexDirection:"row",backgroundColor:"#0e5f8554",
-    width:"70%",marginLeft:"50px",borderRadius:"15px",marginBottom:"9px",border:"solid,2px,#4cfcd6"}}>
-    <span><BsLightningCharge size={26} style={{color:"#4cfcd6"}}/></span>
-    <span style={{marginLeft:"29px",textAlign:"center"}}>এনার্জি ও স্ট্যামিনা বুস্টার</span>
-  </div>
-<div style={{flexDirection:"row",backgroundColor:"#0e5f8554",
-  width:"70%",marginLeft:"50px",borderRadius:"15px",marginBottom:"9px",border:"solid,2px,#4cfcd6"}}>
-    <span><GrSecure size={26} style={{color:"#4cfcd6"}}/></span>
-    <span style={{marginLeft:"29px",textAlign:"center"}}>কোয়ালিটি কন্ট্রোলড</span>
-  </div>
-  <div style={{flexDirection:"row",backgroundColor:"#0e5f8554",width:"70%",
-    marginLeft:"50px",borderRadius:"15px",marginBottom:"9px",border:"solid,2px,#4cfcd6"}}>
-    <span><TbTruckDelivery size={26} style={{color:"#4cfcd6"}}/></span>
-    <span style={{marginLeft:"29px",textAlign:"center"}}>ডেলিভারি বাংলাদেশ</span>
-  </div><div style={{flexDirection:"row",backgroundColor:"#0e5f8554",width:"70%",
-    marginLeft:"50px",borderRadius:"15px",marginBottom:"9px",border:"solid,2px,#4cfcd6"}}>
-    <span><CiCircleCheck size={26} style={{color:"#4cfcd6"}}/></span>
-    <span style={{marginLeft:"29px",textAlign:"center"}}>অরিজিনাল ইম্পোর্টেড</span>
-  </div>
-  <button 
-  onClick={scroll}
-  style={{backgroundColor:"#f8e807",color:"black", marginTop:"30px",padding:"15px",borderRadius:"16px",fontFamily:"fangsong",fontSize:"20px"}}>অর্ডার করতে ক্লিক করুন</button>
-</div>
+      <ViewCounter />
 
-<div
-  style={{
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: "20px",
-  }}
->
-  {/* আউটার গ্র্যাডিয়েন্ট বর্ডার র‍্যাপার */}
-  <div
-    style={{
-      padding: "4px",
-      borderRadius: "24px",
-      background: "linear-gradient(135deg, #6366f1, #ec4899, #f59e0b)",
-      boxShadow: "0 20px 40px -10px rgba(99, 102, 241, 0.45)",
-      width: "100%",
-      maxWidth: "340px",
-    }}
-  >
-    {/* ইনার ভিডিও কন্টেইনার (9:16 Shorts রেশিও) */}
-    <div
-      style={{
-        position: "relative",
-        width: "100%",
-        aspectRatio: "9 / 16",
-        borderRadius: "20px",
-        overflow: "hidden",
-        backgroundColor: "#0f172a",
-      }}
-    >
-      <iframe
-        src="https://www.youtube.com/embed/FDAWBHtvYIg?autoplay=1&mute=1&loop=1&playlist=FDAWBHtvYIg&controls=1&rel=0&modestbranding=1"
-        title="YouTube Shorts Player"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowFullScreen
-        style={{
-          width: "100%",
-          height: "100%",
-          border: "none",
-          display: "block",
-        }}
-      />
-    </div>
-  </div>
-</div>
+      {/* মেইন মোবাইল-ফ্রেন্ডলি কন্টেইনার */}
+      <div style={styles.container}>
+        {/* ১. হিরো সেকশন */}
+        <section style={styles.heroSection}>
+          <div style={styles.badge}>🌿 ১০০% ন্যাচারাল ও পার্শ্বপ্রতিক্রিয়ামুক্ত</div>
 
+          <h1 style={styles.mainTitle}>ULTRA HOT</h1>
+          <p style={styles.subBadge}>মালয়েশিয়ান প্রযুক্তিতে তৈরি (100% Original)</p>
 
-<div style={{width:"100%",backgroundColor:"white",height:"auto",marginTop:"20px"}}>
-  <img
-  src="/23765626_l-2.gif"
-  style={{marginTop:"10px"}}
-  />
-<h1 style={{color:"black"}}>ইরেক্টাইল ডিসফাংশন এবং অকাল বীর্যপাতের স্থায়ী সমাধান</h1>
+          <div style={styles.mediaCard}>
+            <img src="/ling1.jpg" alt="Ultra Hot Product" style={styles.uniformMedia} />
+          </div>
 
-<h1 style={{color:"black",marginTop:"16px",backgroundColor:"#FFC0CB",margin:"15px",borderRadius:"10px"}}>এক ফাইলেই স্থায়ী সমাধান</h1>
-  <button 
-  onClick={scroll}
-  
-  style={{backgroundColor:"#f8e807",color:"black", marginTop:"30px",padding:"15px",borderRadius:"16px",fontFamily:"fangsong",fontSize:"20px"}}>অর্ডার করতে ক্লিক করুন</button>
+          <p style={styles.heroDesc}>
+            হতাশাকে বলুন বিদায়! আধুনিক মালয়েশিয়ান প্রযুক্তিতে তৈরি{" "}
+            <strong style={{ color: "#fde047" }}>আলট্রা হট ক্যাপসুল</strong> আপনাকে দেবে
+            হারানো যৌবন এবং অফুরন্ত এনার্জি।
+          </p>
 
-</div>
-<div style={{backgroundColor:"#bfecd2",width:"100%",height:"auto"}}>
+          {/* ফিচার লিস্ট */}
+          <div style={styles.featureList}>
+            <div style={styles.featureItem}>
+              <BsLightningCharge size={22} color="#38bdf8" />
+              <span>এনার্জি ও স্ট্যামিনা বুস্টার</span>
+            </div>
+            <div style={styles.featureItem}>
+              <GrSecure size={22} color="#34d399" />
+              <span>কোয়ালিটি কন্ট্রোলড ও নিরাপদ</span>
+            </div>
+            <div style={styles.featureItem}>
+              <TbTruckDelivery size={22} color="#fbbf24" />
+              <span>সারা বাংলাদেশে হোম ডেলিভারি</span>
+            </div>
+            <div style={styles.featureItem}>
+              <CiCircleCheck size={24} color="#a78bfa" />
+              <span>১০০% অরিজিনাল ইম্পোর্টেড</span>
+            </div>
+          </div>
 
-  <h3 style={{color:"#0c5e61",marginTop:"30px"}}>সেরা ভ্যালু প্যাকেজ</h3>
-<p style={{color:"black",marginTop:"30px"}}>আপনার যৌন স্বাস্থ্য সুরক্ষায় আজই বেছে নিন জাপানি প্রযুক্তির লিং লং ক্যাপসুল। সীমিত সময়ের অফার!</p>
+          <button onClick={scroll} className="cta-btn" style={styles.primaryCta}>
+            🛒 অর্ডার করতে ক্লিক করুন
+          </button>
+        </section>
 
-<div style={{marginTop:"30px",width:"80%",backgroundColor:"#f5ee8b",
-  justifyContent:"center",paddingBottom:"20px",borderRadius:"15px",border:"2px,solid,yellow",height:"auto",marginLeft:"20px"}}>
+        {/* ২. YouTube Shorts ভিডিও সেকশন */}
+        <section style={styles.sectionBlock}>
+          <div style={styles.videoOuterBorder}>
+            <div style={styles.videoInnerBox}>
+              <iframe
+                src="https://www.youtube.com/embed/FDAWBHtvYIg?autoplay=1&mute=1&loop=1&playlist=FDAWBHtvYIg&controls=1&rel=0&modestbranding=1"
+                title="YouTube Shorts Player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                style={{ width: "100%", height: "100%", border: "none", display: "block" }}
+              />
+            </div>
+          </div>
+        </section>
 
+        {/* ৩. সমাধান ও GIF সেকশন */}
+        <section style={styles.whiteCard}>
+          <div style={styles.gifBorderBox}>
+            <img src="/23765626_l-2.gif" alt="Solution" style={styles.uniformMedia} />
+          </div>
 
+          <h2 style={styles.darkHeading}>
+            ইরেক্টাইল ডিসফাংশন এবং অকাল বীর্যপাতের স্থায়ী সমাধান
+          </h2>
 
-<div style={{backgroundColor:"#1f5e19",borderRadius:"60%",width:"50px",marginLeft:"40%", justifyContent:"center",}}>
-<FaChessKing size={40} style={{color:"yellow",marginTop:"5%"}}/>
+          <div style={styles.highlightBanner}>✨ এক ফাইলেই স্থায়ী সমাধান ✨</div>
 
-</div>
-<h2 style={{color:"black",marginTop:"20px"}}>ULTRA HOT CAPSULES</h2>
-<h1 style={{color:"#244915",marginTop:"20px"}}>৳1500</h1>
-<hr style={{color:"black",marginTop:"40px"}}/>
+          <button onClick={scroll} className="cta-btn" style={styles.primaryCta}>
+            🛒 অর্ডার করতে ক্লিক করুন
+          </button>
+        </section>
 
-<p style={{marginTop:"30px"}}><span><CiCircleCheck size={26} 
-style={{backgroundColor:"#114615",borderRadius:"50%",fontStyle:"oblique"}}/></span>
-<span style={{color:"black",marginLeft:"20px",fontWeight:"bold"}}>৬০ টি ক্যাপসুল (২ মাসের কোর্স)</span></p>
-<p style={{marginTop:"10px"}}><span><CiCircleCheck size={26} 
-style={{backgroundColor:"#114615",borderRadius:"50%",fontStyle:"oblique"}}/></span>
-<span style={{color:"black",marginLeft:"20px",fontWeight:"bold"}}>ফ্রি হোম ডেলিভারি সুবিধা</span></p>
-<p style={{marginTop:"10px"}}><span><CiCircleCheck size={26} 
-style={{backgroundColor:"#114615",borderRadius:"50%",fontStyle:"oblique"}}/></span>
-<span style={{color:"black",marginLeft:"20px",fontWeight:"bold"}}>নিশ্চিন্তে ক্যাশ অন ডেলিভারি</span></p>
-<p style={{marginTop:"10px"}}><span><CiCircleCheck size={26} 
-style={{backgroundColor:"#114615",borderRadius:"50%",fontStyle:"oblique"}}/></span>
-<span style={{color:"black",marginLeft:"20px",fontWeight:"bold"}}>100% অরিজিনাল জাপানি পণ্য</span></p>
+        {/* ৪. সেরা ভ্যালু প্যাকেজ কার্ড */}
+        <section style={styles.packageWrapper}>
+          <span style={styles.offerTag}>🔥 সীমিত সময়ের স্পেশাল অফার</span>
+          <h2 style={styles.sectionTitleDark}>সেরা ভ্যালু প্যাকেজ</h2>
+          <p style={styles.sectionSubDark}>
+            আপনার যৌন স্বাস্থ্য সুরক্ষায় আজই বেছে নিন অরিজিনাল আলট্রা হট ক্যাপসুল।
+          </p>
 
-  <button 
-  onClick={scroll}
-  
-  style={{backgroundColor:"#145e30",color:"black", marginTop:"30px",padding:"15px",borderRadius:"16px",fontFamily:"fangsong",fontSize:"20px"}}>অর্ডার করতে ক্লিক করুন</button>
+          <div style={styles.pricingCard}>
+            <div style={styles.crownCircle}>
+              <FaChessKing size={30} color="#fde047" />
+            </div>
 
+            <h3 style={{ margin: "12px 0 4px", fontSize: "22px", color: "#0f172a", fontWeight: "800" }}>
+              ULTRA HOT CAPSULES
+            </h3>
 
-</div>
-</div>
-     <h2 style={{marginTop:"30px"}}>🧠 ultra hot আপনার যে সব সমস্যার সাপোর্ট দেয়</h2>
-    
-    <p style={{marginTop:"10px"}}>বিশেষ সময়ে তৃপ্তির জন্য এটির কোন বিকল্প নেই
-</p>
+            <div style={styles.priceTag}>
+              <span style={{ textDecoration: "line-through", color: "#94a3b8", fontSize: "20px", marginRight: "10px" }}>
+                ৳1500
+              </span>
+              <span>৳1250</span>
+            </div>
 
-<img 
-src="/sweet-honey-1-1-1.gif"
-style={{marginTop:"20px",borderRadius:"15px"}}
-/>
-<div style={{ marginTop: "30px", overflow: "hidden" }}>
-  <div
-    style={{
-      display: "flex",
-      gap: "16px",
-      width: "max-content",
-      animation: "scrollLeft 20s linear infinite",
-    }}
-  >
-    {/* Card 1 */}
-    <div
-      style={{
-        display: "flex",
-          flexDirection:"column",
-        alignItems: "center",
-        gap: "12px",
-        padding: "12px 18px",
-        whiteSpace: "nowrap",
-        background: "rgba(255, 255, 255, 0.25)",
-        backdropFilter: "blur(10px)",
-        WebkitBackdropFilter: "blur(10px)",
-        border: "1px solid rgba(255, 255, 255, 0.4)",
-        borderRadius: "14px",
-        boxShadow: "0 6px 20px rgba(0, 0, 0, 0.12)",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          flexDirection:"column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "8px",
-          borderRadius: "10px",
-          background: "#ffd54f",
-        }}
-      >
-        <BsLightningCharge size={26} />
+            <hr style={{ border: "none", borderTop: "1px dashed #cbd5e1", margin: "18px 0" }} />
+
+            <div style={styles.packageList}>
+              <div style={styles.packageRow}>
+                <CiCircleCheck size={24} color="#059669" />
+                <span>৬০ টি ক্যাপসুল (২ মাসের পূর্ণ কোর্স)</span>
+              </div>
+              <div style={styles.packageRow}>
+                <CiCircleCheck size={24} color="#059669" />
+                <span>ফ্রি হোম ডেলিভারি সুবিধা</span>
+              </div>
+              <div style={styles.packageRow}>
+                <CiCircleCheck size={24} color="#059669" />
+                <span>নিশ্চিন্তে ক্যাশ অন ডেলিভারি</span>
+              </div>
+              <div style={styles.packageRow}>
+                <CiCircleCheck size={24} color="#059669" />
+                <span>১০০% অরিজিনাল ইম্পোর্টেড পণ্য</span>
+              </div>
+            </div>
+
+            <button onClick={scroll} className="cta-btn" style={styles.greenCta}>
+              🛒 অর্ডার করতে ক্লিক করুন
+            </button>
+          </div>
+        </section>
+
+        {/* ৫. কার্যকারিতা ও স্লাইডার সেকশন */}
+        <section style={styles.whiteCard}>
+          <h2 style={styles.darkHeading}>🧠 Ultra Hot আপনার যেসব সমস্যার সাপোর্ট দেয়</h2>
+          <p style={{ color: "#475569", marginBottom: "18px", fontSize: "15px" }}>
+            বিশেষ সময়ে তৃপ্তির জন্য এটির কোনো বিকল্প নেই
+          </p>
+
+          <div style={styles.gifBorderBox}>
+            <img src="/sweet-honey-1-1-1.gif" alt="Benefits" style={styles.uniformMedia} />
+          </div>
+
+          {/* অটো স্ক্রলিং বেনিফিট কার্ড */}
+          <div style={{ marginTop: "24px", overflow: "hidden", padding: "10px 0" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "14px",
+                width: "max-content",
+                animation: "scrollLeft 18s linear infinite",
+              }}
+            >
+              {[
+                { icon: <BsLightningCharge size={22} />, bg: "#fef08a", text: "মিলনে সময় বাড়াবে ২৫-৩৫ মিনিট" },
+                { icon: <FaPen size={20} />, bg: "#bae6fd", text: "গোপনাঙ্গকে মোটা ও লম্বা করবে" },
+                { icon: <GiSelfLove size={22} color="#fff" />, bg: "#16a34a", text: "ভালো ফিলিংস ও উত্তেজনা আনবে" },
+                { icon: <FaHourglassStart size={20} />, bg: "#fde047", text: "লিঙ্গকে স্ট্রং ও মজবুত করবে" },
+                { icon: <BsLightningCharge size={22} />, bg: "#bae6fd", text: "পাতলা বীর্য ঘন করবে" },
+              ].map((item, idx) => (
+                <div key={idx} style={styles.sliderCard}>
+                  <div style={{ ...styles.sliderIconBox, backgroundColor: item.bg }}>{item.icon}</div>
+                  <p style={{ margin: 0, fontWeight: "600", color: "#1e293b", fontSize: "14px" }}>
+                    {item.text}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button onClick={scroll} className="cta-btn" style={styles.primaryCta}>
+            🛒 অর্ডার করতে ক্লিক করুন
+          </button>
+
+          <div style={{ ...styles.mediaCard, marginTop: "28px" }}>
+            <img src="/1111.jpg" alt="Product Bottle" style={styles.uniformMedia} />
+          </div>
+        </section>
+
+        {/* ৬. ক্যাপসুল সেবন বিধি */}
+        <section style={styles.whiteCard}>
+          <h2 style={styles.darkHeading}>💊 ক্যাপসুল সেবন বিধি</h2>
+          <p style={{ color: "#475569", fontSize: "15px", lineHeight: "1.6", marginBottom: "20px" }}>
+            প্রতিদিন রাত্রে খাবার পর একটি করে ক্যাপসুল খাবেন। এক বোতলে ৬০ টি ক্যাপসুল আছে, যা ২ মাসের পূর্ণাঙ্গ কোর্স।
+          </p>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <div style={styles.usageCard}>
+              <div style={{ ...styles.usageIcon, backgroundColor: "#fbcfe8", color: "#be185d" }}>
+                <FaStopwatch size={22} />
+              </div>
+              <span>প্রতি রাতে খাবার পর ১টি ক্যাপসুল</span>
+            </div>
+
+            <div style={styles.usageCard}>
+              <div style={{ ...styles.usageIcon, backgroundColor: "#dbeafe", color: "#1d4ed8" }}>
+                <SlCalender size={20} />
+              </div>
+              <span>৬০টি ক্যাপসুল - পূর্ণ ২ মাসের কোর্স</span>
+            </div>
+
+            <div style={styles.usageCard}>
+              <div style={{ ...styles.usageIcon, backgroundColor: "#dcfce7", color: "#15803d" }}>
+                <BsLightningCharge size={22} />
+              </div>
+              <span>২-৩ দিনের মধ্যেই পরিবর্তন লক্ষ্য করবেন</span>
+            </div>
+          </div>
+
+          <button onClick={scroll} className="cta-btn" style={styles.primaryCta}>
+            🛒 অর্ডার করতে ক্লিক করুন
+          </button>
+        </section>
+
+        {/* ৭. অর্ডার ফর্ম সেকশন */}
+        <section ref={orderFormRef} style={styles.formSection}>
+          <div style={styles.formHeaderBanner}>
+            অর্ডার করতে নিচের ফরমটি সঠিক তথ্য দিয়ে পূরণ করুন
+          </div>
+
+          <form onSubmit={handle} style={styles.formCard}>
+            <div style={{ textAlign: "center", marginBottom: "6px" }}>
+              <h2 style={{ margin: "0 0 4px 0", color: "#0f172a", fontSize: "22px", fontWeight: "800" }}>
+                আপনার ডেলিভারি তথ্য দিন
+              </h2>
+              <p style={{ margin: 0, color: "#64748b", fontSize: "13px" }}>
+                কোনো অগ্রিম টাকা ছাড়াই ক্যাশ অন ডেলিভারিতে অর্ডার করুন
+              </p>
+            </div>
+
+            <div style={styles.inputGroup}>
+              <label style={styles.label}>আপনার নাম *</label>
+              <input
+                type="text"
+                placeholder="সম্পূর্ণ নাম লিখুন"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                style={styles.input}
+              />
+            </div>
+
+            <div style={styles.inputGroup}>
+              <label style={styles.label}>সম্পূর্ণ ঠিকানা *</label>
+              <textarea
+                placeholder="বাসা নং, রোড, থানা, জেলা লিখুন"
+                required
+                value={area}
+                onChange={(e) => setArea(e.target.value)}
+                rows={3}
+                style={{ ...styles.input, resize: "vertical", fontFamily: "inherit" }}
+              />
+            </div>
+
+            <div style={styles.inputGroup}>
+              <label style={styles.label}>মোবাইল নাম্বার *</label>
+              <input
+                type="tel"
+                placeholder="01XXXXXXXXX"
+                required
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                pattern="01[0-9]{9}"
+                maxLength={11}
+                style={styles.input}
+              />
+            </div>
+
+            {/* পরিমাণ ও মোট মূল্য বক্স */}
+            <div style={styles.summaryBox}>
+              <div>
+                <span style={{ fontSize: "13px", color: "#64748b", display: "block", marginBottom: "6px", fontWeight: "600" }}>
+                  পরিমাণ (পিস)
+                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((prev) => (prev > 1 ? prev - 1 : 1))}
+                    style={styles.qtyBtnMinus}
+                  >
+                    -
+                  </button>
+                  <span style={{ fontSize: "20px", fontWeight: "800", color: "#0f172a", minWidth: "24px", textAlign: "center" }}>
+                    {quantity}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((prev) => prev + 1)}
+                    style={styles.qtyBtnPlus}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <div style={{ textAlign: "right" }}>
+                <span style={{ fontSize: "13px", color: "#64748b", display: "block", marginBottom: "4px", fontWeight: "600" }}>
+                  সর্বমোট মূল্য
+                </span>
+                <span style={{ fontSize: "24px", fontWeight: "800", color: "#059669" }}>
+                  ৳{quantity * price}
+                </span>
+              </div>
+            </div>
+
+            <button type="submit" disabled={loading} style={styles.submitBtn}>
+              {loading ? "⏳ অর্ডার প্রসেস হচ্ছে..." : "✅ অর্ডার কনফার্ম করুন"}
+            </button>
+          </form>
+        </section>
       </div>
-      <p style={{ marginTop: "30px" }}>মিলনে সময় বাড়াবে ২৫-৩৫ মিনিট</p>
-    </div>
-
-    {/* Card 2 */}
-    <div
-      style={{
-        display: "flex",
-          flexDirection:"column",
-        alignItems: "center",
-        gap: "12px",
-        padding: "12px 18px",
-        whiteSpace: "nowrap",
-        background: "rgba(255, 255, 255, 0.25)",
-        backdropFilter: "blur(10px)",
-        WebkitBackdropFilter: "blur(10px)",
-        border: "1px solid rgba(255, 255, 255, 0.4)",
-        borderRadius: "14px",
-        boxShadow: "0 6px 20px rgba(0, 0, 0, 0.12)",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          flexDirection:"column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "8px",
-          borderRadius: "10px",
-          background: "#81d4fa",
-        }}
-      >
-        <FaPen size={26} />
-      </div>
-      <p style={{ marginTop: "30px" }}>গোপনাঙ্গকে মোটা ও লম্বা করবে</p>
-    </div>
-<div
-      style={{
-        display: "flex",
-          flexDirection:"column",
-        alignItems: "center",
-        gap: "12px",
-        padding: "12px 18px",
-        whiteSpace: "nowrap",
-        background: "rgba(255, 255, 255, 0.25)",
-        backdropFilter: "blur(10px)",
-        WebkitBackdropFilter: "blur(10px)",
-        border: "1px solid rgba(255, 255, 255, 0.4)",
-        borderRadius: "14px",
-        boxShadow: "0 6px 20px rgba(0, 0, 0, 0.12)",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          flexDirection:"column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "8px",
-          borderRadius: "10px",
-          background: "#0d6619",
-        }}
-      >
-        <GiSelfLove size={26} />
-      </div>
-      <p style={{ marginTop: "30px" }}>ভাল ফিলিংস আসবে</p>
-    </div>
-<div
-      style={{
-        display: "flex",
-          flexDirection:"column",
-        alignItems: "center",
-        gap: "12px",
-        padding: "12px 18px",
-        whiteSpace: "nowrap",
-        background: "rgba(255, 255, 255, 0.25)",
-        backdropFilter: "blur(10px)",
-        WebkitBackdropFilter: "blur(10px)",
-        border: "1px solid rgba(255, 255, 255, 0.4)",
-        borderRadius: "14px",
-        boxShadow: "0 6px 20px rgba(0, 0, 0, 0.12)",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          flexDirection:"column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "8px",
-          borderRadius: "10px",
-          background: "#fcf823",
-        }}
-      >
-        <FaHourglassStart size={26} />
-      </div>
-      <p style={{marginTop: "30px" }}>লিঙ্গ কে স্ট্রং ও মজবুত করবে
-      </p>
-    </div>
-<div
-      style={{
-        display: "flex",
-          flexDirection:"column",
-        alignItems: "center",
-        gap: "12px",
-        padding: "12px 18px",
-        whiteSpace: "nowrap",
-        background: "rgba(255, 255, 255, 0.25)",
-        backdropFilter: "blur(10px)",
-        WebkitBackdropFilter: "blur(10px)",
-        border: "1px solid rgba(255, 255, 255, 0.4)",
-        borderRadius: "14px",
-        boxShadow: "0 6px 20px rgba(0, 0, 0, 0.12)",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          flexDirection:"column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "8px",
-          borderRadius: "10px",
-          background: "#81d4fa",
-        }}
-      >
-        <BsLightningCharge size={26} />
-      </div>
-      <p style={{ marginTop: "30px" }}>বীর্য পাতলাকে ঘন করবে</p>
-    </div>
-
-   
-  </div>
-</div>
-  <button 
-  onClick={scroll}
-  
-  style={{backgroundColor:"#f8e807",color:"black", marginTop:"30px",padding:"15px",borderRadius:"16px",fontFamily:"fangsong",fontSize:"20px"}}>অর্ডার করতে ক্লিক করুন</button>
-<img 
-src="/1111.jpg"
-style={{width:"70%",height:"50vh",marginTop:"40px"}}
-/>
-<div style={{backgroundColor:"white",paddingBottom:"50px",width:"100%", marginTop:"40px",color:"black"}}>
-
-
-  <h1 style={{marginTop:"100px"}}>ক্যাপসুল সেবন বিধি</h1>
-  <p style={{marginTop:"60px"}}>প্রতিদিন রাত্রে খাবার পর একটি করে ক্যাপসুল খাবেন। এক বোতলে ৬০ টি ক্যাপসুল আছে, যা ২ মাসের পূর্ণাঙ্গ কোর্স।</p>
-<div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        marginTop:"40px",
-        gap: "12px",
-        padding: "12px 18px",
-        whiteSpace: "nowrap",
-        background: "rgba(21, 102, 34, 0.25)",
-        backdropFilter: "blur(10px)",
-        WebkitBackdropFilter: "blur(10px)",
-        border: "1px solid rgba(255, 255, 255, 0.4)",
-        borderRadius: "14px",
-        boxShadow: "0 6px 20px rgba(0, 0, 0, 0.12)",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "8px",
-          borderRadius: "10px",
-          background: "#fa81e0",
-        }}
-      >
-        <FaStopwatch size={26} />
-      </div>
-      <p>প্রতি রাতে খাবার পর ১টি ক্যাপসুল</p>
-    </div>
-<div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        marginTop:"40px",
-        gap: "12px",
-        padding: "12px 18px",
-        whiteSpace: "nowrap",
-        background: "rgba(21, 102, 34, 0.25)",
-        backdropFilter: "blur(10px)",
-        WebkitBackdropFilter: "blur(10px)",
-        border: "1px solid rgba(255, 255, 255, 0.4)",
-        borderRadius: "14px",
-        boxShadow: "0 6px 20px rgba(0, 0, 0, 0.12)",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "8px",
-          borderRadius: "10px",
-          background: "#0a1f7a",
-        }}
-      >
-        <SlCalender size={26} />
-      </div>
-      <p>30টি ক্যাপসুল - পূর্ণ 1 মাসের কোর্স</p>
-    </div>
-<div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        marginTop:"40px",
-        gap: "12px",
-        padding: "12px 18px",
-        whiteSpace: "nowrap",
-        background: "rgba(21, 102, 34, 0.25)",
-        backdropFilter: "blur(10px)",
-        WebkitBackdropFilter: "blur(10px)",
-        border: "1px solid rgba(255, 255, 255, 0.4)",
-        borderRadius: "14px",
-        boxShadow: "0 6px 20px rgba(0, 0, 0, 0.12)",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "8px",
-          borderRadius: "10px",
-          background: "#81d4fa",
-        }}
-      >
-        <BsLightningCharge size={26} />
-      </div>
-      <p>২-৩ দিনের মধ্যেই পরিবর্তন লক্ষ্য করবেন</p>
-    </div>
-    <div
-      style={{
-        display: "flex",
-        flexDirection:"column",
-        alignItems: "center",
-        marginTop:"40px",
-        gap: "12px",
-        padding: "12px 18px",
-        whiteSpace: "nowrap",
-        background: "rgba(40, 202, 107, 0.97)",
-        backdropFilter: "blur(10px)",
-        WebkitBackdropFilter: "blur(10px)",
-        border: "1px solid rgba(255, 255, 255, 0.4)",
-        borderRadius: "14px",
-        boxShadow: "0 6px 20px rgba(0, 0, 0, 0.12)",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-           flexDirection:"column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "8px",
-          borderRadius: "10px",
-          background: "#81d4fa",
-        }}
-      >
-        <BsLightningCharge size={26} />
-      </div>
-      <p>২-৩ দিনের মধ্যেই পরিবর্তন লক্ষ্য করবেন</p>
-    </div>
-  <button 
-  
-  onClick={scroll}
-  
-  style={{backgroundColor:"#f8e807",color:"black", marginTop:"30px",padding:"15px",borderRadius:"16px",fontFamily:"fangsong",fontSize:"20px"}}>অর্ডার করতে ক্লিক করুন</button>
-
-</div>
-<div style={{backgroundColor:"whitesmoke",width:"100%",height:"auto",paddingBottom:"14px"}}>
-
-  <h1 style={{backgroundColor:"red",color:"black"}}>
-    অর্ডার করতে নিচের ফরম পূরণ করুন
-  </h1>
-<form
-onSubmit={handle}
-  ref={orderFormRef}
-  style={{
-    maxWidth: "440px",
-    margin: "30px auto",
-    padding: "32px 28px",
-    borderRadius: "16px",
-    backgroundColor: "#ffffff",
-    border: "1px solid #e2e8f0",
-    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.04)",
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
-    fontFamily: "'Hind Siliguri', 'Inter', sans-serif",
-  }}
->
-  <div style={{ textAlign: "center", marginBottom: "8px" }}>
-    <h2
-      style={{
-        margin: "0 0 6px 0",
-        color: "#0f172a",
-        fontSize: "22px",
-        fontWeight: "700",
-      }}
-    >
-      আপনার তথ্য দিন
-    </h2>
-    <p style={{ margin: 0, color: "#64748b", fontSize: "14px" }}>
-      অর্ডারটি কনফার্ম করতে নিচের তথ্যগুলো পূরণ করুন
-    </p>
-  </div>
-
-  <input
-    type="text"
-    name="name"
-    placeholder="আপনার নাম"
-    value={name}
-    onChange={(e)=>setName(e.target.value)}
-    required
-    style={{
-      padding: "13px 16px",
-      borderRadius: "10px",
-      border: "1px solid #cbd5e1",
-      backgroundColor: "#f8fafc",
-      color: "#0a0a0a",
-      fontWeight:"bold",
-      fontSize: "15px",
-      
-      outline: "none",
-    }}
-  />
-
-  <textarea
-    name="address"
-    placeholder="আপনার সম্পূর্ণ ঠিকানা (বাসা নং, রোড, থানা, জেলা)"
-    required
-     value={area}
-    onChange={(e)=>setArea(e.target.value)}
-    rows={3}
-    style={{
-      padding: "13px 16px",
-      borderRadius: "10px",
-      border: "1px solid #cbd5e1",
-      backgroundColor: "#f8fafc",
-    color: "#0a0a0a",
-      fontWeight:"bold",
-      fontSize: "15px",
-      outline: "none",
-      resize: "vertical",
-      fontFamily: "inherit",
-    }}
-  />
-
-  <input
-    type="tel"
-    name="mobile"
-    placeholder="আপনার মোবাইল নাম্বার (01XXXXXXXXX)"
-    required
-     value={phone}
-    onChange={(e)=>setPhone(e.target.value)}
-    pattern="01[0-9]{9}"
-    maxLength={11}
-    style={{
-      padding: "13px 16px",
-      borderRadius: "10px",
-      border: "1px solid #cbd5e1",
-      backgroundColor: "#f8fafc",
-      color: "#0a0a0a",
-      fontWeight:"bold",
-      fontSize: "15px",
-      outline: "none",
-    }}
-  />
-  <div style={{width:"100%",display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
-    <h3 style={{color:"green"}}>পিস</h3>
-    <h3 style={{color:"red"}}>প্রাইস</h3>
-  </div>
-  <div   style={{display:"flex",flexDirection:"row",width:"100%",justifyContent:"space-between"}}>
-< div style={{display:"flex",flexDirection:"row",gap:"14px"}}>
-
-<button 
-
-
-type="button"
-onClick={()=>setQuantity(quantity?quantity+1:quantity)}
-
- style={{backgroundColor:"red",paddingInline:"17px",borderRadius:"10px",fontWeight:"bold"}}>+</button>
-<h1 style={{color:"#000"}}>
-
-{quantity}
-
-</h1>
-<button 
-
-
-type="button"
-onClick={()=>setQuantity(quantity>1?quantity - 1:1)}
-
-  style={{backgroundColor:"green",paddingInline:"17px",borderRadius:"10px",fontWeight:"bold"}}>-</button>
-</div>
-
-<div>
-<h1 style={{color:"black"}}>{quantity*price}</h1>
-</div>
-</div>
-  <button
-    type="submit"
-    style={{
-      marginTop: "6px",
-      padding: "14px",
-      borderRadius: "10px",
-      border: "none",
-      backgroundColor: "#0f172a", // প্রিমিয়াম ডার্ক নেভি বা চাইলে #059669 (Emerald Green) দিতে পারেন
-      color: "#ffffff",
-      fontSize: "16px",
-      fontWeight: "600",
-      cursor: "pointer",
-      boxShadow: "0 4px 12px rgba(15, 23, 42, 0.2)",
-    }}
-    disabled={loading}
-  >
-   {loading?"ওয়েট....":" অর্ডার কনফার্ম করুন"}
-  </button>
-</form>
-
-</div>
-
     </div>
   );
 }
+
+/* প্রফেশনাল CSS অবজেক্ট */
+const styles = {
+  pageWrapper: {
+    backgroundColor: "#f1f5f9",
+    minHeight: "100vh",
+    fontFamily: "'Hind Siliguri', 'Segoe UI', sans-serif",
+    paddingBottom: "50px",
+  },
+  container: {
+    maxWidth: "540px",
+    margin: "0 auto",
+    backgroundColor: "#ffffff",
+    boxShadow: "0 10px 40px rgba(0, 0, 0, 0.08)",
+    overflow: "hidden",
+  },
+  heroSection: {
+    background: "linear-gradient(160deg, #1e1b4b 0%, #311042 50%, #4c0519 100%)",
+    color: "#ffffff",
+    padding: "32px 20px 38px",
+    textAlign: "center",
+  },
+  badge: {
+    display: "inline-block",
+    backgroundColor: "rgba(16, 185, 129, 0.2)",
+    color: "#6ee7b7",
+    border: "1px solid rgba(16, 185, 129, 0.4)",
+    padding: "6px 16px",
+    borderRadius: "999px",
+    fontSize: "14px",
+    fontWeight: "600",
+    marginBottom: "14px",
+  },
+  mainTitle: {
+    fontSize: "38px",
+    fontWeight: "900",
+    letterSpacing: "2px",
+    color: "#fde047",
+    margin: "0 0 6px",
+    textShadow: "0 4px 15px rgba(253, 224, 71, 0.3)",
+  },
+  subBadge: {
+    color: "#e2e8f0",
+    fontSize: "15px",
+    marginBottom: "22px",
+  },
+  mediaCard: {
+    width: "100%",
+    maxWidth: "380px",
+    height: "280px",
+    margin: "0 auto",
+    borderRadius: "18px",
+    padding: "5px",
+    background: "linear-gradient(135deg, #f59e0b, #ec4899, #6366f1)",
+    boxShadow: "0 15px 30px rgba(0, 0, 0, 0.3)",
+    overflow: "hidden",
+  },
+  gifBorderBox: {
+    width: "100%",
+    maxWidth: "380px",
+    height: "260px",
+    margin: "0 auto 20px",
+    borderRadius: "18px",
+    padding: "4px",
+    background: "linear-gradient(135deg, #10b981, #3b82f6)",
+    boxShadow: "0 12px 25px rgba(16, 185, 129, 0.2)",
+    overflow: "hidden",
+  },
+  uniformMedia: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    borderRadius: "14px",
+    display: "block",
+    backgroundColor: "#0f172a",
+  },
+  heroDesc: {
+    marginTop: "22px",
+    fontSize: "16px",
+    lineHeight: "1.65",
+    color: "#f8fafc",
+    padding: "0 8px",
+  },
+  featureList: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+    maxWidth: "380px",
+    margin: "24px auto",
+  },
+  featureItem: {
+    display: "flex",
+    alignItems: "center",
+    gap: "14px",
+    backgroundColor: "rgba(255, 255, 255, 0.08)",
+    backdropFilter: "blur(8px)",
+    border: "1px solid rgba(255, 255, 255, 0.15)",
+    padding: "12px 18px",
+    borderRadius: "12px",
+    fontSize: "15px",
+    fontWeight: "600",
+    color: "#ffffff",
+  },
+  primaryCta: {
+    marginTop: "22px",
+    background: "linear-gradient(135deg, #facc15 0%, #f59e0b 100%)",
+    color: "#0f172a",
+    border: "2px solid #fef08a",
+    padding: "15px 32px",
+    borderRadius: "14px",
+    fontSize: "19px",
+    fontWeight: "800",
+    cursor: "pointer",
+    width: "100%",
+    maxWidth: "340px",
+  },
+  greenCta: {
+    marginTop: "22px",
+    background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+    color: "#ffffff",
+    border: "none",
+    padding: "15px 32px",
+    borderRadius: "14px",
+    fontSize: "19px",
+    fontWeight: "800",
+    cursor: "pointer",
+    width: "100%",
+    boxShadow: "0 10px 25px rgba(5, 150, 105, 0.35)",
+  },
+  sectionBlock: {
+    padding: "28px 20px",
+    display: "flex",
+    justifyContent: "center",
+    backgroundColor: "#f8fafc",
+  },
+  videoOuterBorder: {
+    padding: "5px",
+    borderRadius: "24px",
+    background: "linear-gradient(135deg, #6366f1, #ec4899, #f59e0b)",
+    boxShadow: "0 20px 40px -10px rgba(99, 102, 241, 0.4)",
+    width: "100%",
+    maxWidth: "330px",
+  },
+  videoInnerBox: {
+    position: "relative",
+    width: "100%",
+    aspectRatio: "9 / 16",
+    borderRadius: "20px",
+    overflow: "hidden",
+    backgroundColor: "#0f172a",
+  },
+  whiteCard: {
+    padding: "32px 20px",
+    textAlign: "center",
+    borderTop: "1px solid #f1f5f9",
+    backgroundColor: "#ffffff",
+  },
+  darkHeading: {
+    fontSize: "23px",
+    fontWeight: "800",
+    color: "#0f172a",
+    lineHeight: "1.4",
+    marginBottom: "14px",
+  },
+  highlightBanner: {
+    backgroundColor: "#ffe4e6",
+    color: "#be123c",
+    border: "1px solid #fecdd3",
+    padding: "12px",
+    borderRadius: "12px",
+    fontSize: "18px",
+    fontWeight: "800",
+    margin: "12px auto",
+    maxWidth: "360px",
+  },
+  packageWrapper: {
+    background: "linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%)",
+    padding: "36px 20px",
+    textAlign: "center",
+  },
+  offerTag: {
+    display: "inline-block",
+    backgroundColor: "#dc2626",
+    color: "#ffffff",
+    padding: "5px 14px",
+    borderRadius: "999px",
+    fontSize: "13px",
+    fontWeight: "700",
+    marginBottom: "10px",
+  },
+  sectionTitleDark: {
+    fontSize: "26px",
+    fontWeight: "800",
+    color: "#064e3b",
+    margin: "0 0 8px",
+  },
+  sectionSubDark: {
+    color: "#334155",
+    fontSize: "15px",
+    marginBottom: "24px",
+  },
+  pricingCard: {
+    backgroundColor: "#ffffff",
+    borderRadius: "20px",
+    padding: "28px 22px",
+    maxWidth: "400px",
+    margin: "0 auto",
+    border: "2px solid #10b981",
+    boxShadow: "0 20px 35px rgba(6, 78, 59, 0.12)",
+  },
+  crownCircle: {
+    width: "60px",
+    height: "60px",
+    borderRadius: "50%",
+    backgroundColor: "#065f46",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "0 auto",
+    boxShadow: "0 6px 15px rgba(6, 95, 70, 0.3)",
+  },
+  priceTag: {
+    fontSize: "34px",
+    fontWeight: "900",
+    color: "#059669",
+    marginTop: "6px",
+  },
+  packageList: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
+    textAlign: "left",
+  },
+  packageRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    fontSize: "15px",
+    fontWeight: "600",
+    color: "#1e293b",
+  },
+  sliderCard: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "10px",
+    padding: "16px 20px",
+    whiteSpace: "nowrap",
+    backgroundColor: "#f8fafc",
+    border: "1px solid #e2e8f0",
+    borderRadius: "16px",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+  },
+  sliderIconBox: {
+    padding: "10px",
+    borderRadius: "12px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  usageCard: {
+    display: "flex",
+    alignItems: "center",
+    gap: "14px",
+    padding: "14px 16px",
+    backgroundColor: "#f8fafc",
+    border: "1px solid #e2e8f0",
+    borderRadius: "14px",
+    fontSize: "15px",
+    fontWeight: "600",
+    color: "#1e293b",
+    textAlign: "left",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.03)",
+  },
+  usageIcon: {
+    padding: "10px",
+    borderRadius: "10px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  formSection: {
+    backgroundColor: "#f8fafc",
+    padding: "28px 16px 40px",
+    borderTop: "2px solid #e2e8f0",
+  },
+  formHeaderBanner: {
+    backgroundColor: "#dc2626",
+    color: "#ffffff",
+    padding: "12px 16px",
+    borderRadius: "12px",
+    textAlign: "center",
+    fontSize: "17px",
+    fontWeight: "700",
+    maxWidth: "440px",
+    margin: "0 auto 20px",
+    boxShadow: "0 6px 15px rgba(220, 38, 38, 0.25)",
+  },
+  formCard: {
+    maxWidth: "440px",
+    margin: "0 auto",
+    padding: "28px 22px",
+    borderRadius: "18px",
+    backgroundColor: "#ffffff",
+    border: "1px solid #e2e8f0",
+    boxShadow: "0 12px 30px rgba(0, 0, 0, 0.07)",
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px",
+    textAlign: "left",
+  },
+  inputGroup: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "6px",
+  },
+  label: {
+    fontSize: "14px",
+    fontWeight: "700",
+    color: "#334155",
+  },
+  input: {
+    padding: "13px 15px",
+    borderRadius: "10px",
+    border: "1.5px solid #cbd5e1",
+    backgroundColor: "#f8fafc",
+    color: "#0f172a",
+    fontWeight: "600",
+    fontSize: "15px",
+    outline: "none",
+  },
+  summaryBox: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#f1f5f9",
+    padding: "14px 18px",
+    borderRadius: "12px",
+    border: "1px solid #e2e8f0",
+  },
+  qtyBtnMinus: {
+    backgroundColor: "#ef4444",
+    color: "#ffffff",
+    border: "none",
+    width: "34px",
+    height: "34px",
+    borderRadius: "8px",
+    fontSize: "20px",
+    fontWeight: "bold",
+    cursor: "pointer",
+  },
+  qtyBtnPlus: {
+    backgroundColor: "#10b981",
+    color: "#ffffff",
+    border: "none",
+    width: "34px",
+    height: "34px",
+    borderRadius: "8px",
+    fontSize: "20px",
+    fontWeight: "bold",
+    cursor: "pointer",
+  },
+  submitBtn: {
+    marginTop: "6px",
+    padding: "16px",
+    borderRadius: "12px",
+    border: "none",
+    background: "linear-gradient(135deg, #059669 0%, #047857 100%)",
+    color: "#ffffff",
+    fontSize: "18px",
+    fontWeight: "800",
+    cursor: "pointer",
+    boxShadow: "0 10px 25px rgba(5, 150, 105, 0.35)",
+  },
+};
