@@ -116,6 +116,51 @@ style={
   style={{backgroundColor:"#f8e807",color:"black", marginTop:"30px",padding:"15px",borderRadius:"16px",fontFamily:"fangsong",fontSize:"20px"}}>অর্ডার করতে ক্লিক করুন</button>
 </div>
 
+<div
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: "20px",
+  }}
+>
+  {/* আউটার গ্র্যাডিয়েন্ট বর্ডার র‍্যাপার */}
+  <div
+    style={{
+      padding: "4px",
+      borderRadius: "24px",
+      background: "linear-gradient(135deg, #6366f1, #ec4899, #f59e0b)",
+      boxShadow: "0 20px 40px -10px rgba(99, 102, 241, 0.45)",
+      width: "100%",
+      maxWidth: "340px",
+    }}
+  >
+    {/* ইনার ভিডিও কন্টেইনার (9:16 Shorts রেশিও) */}
+    <div
+      style={{
+        position: "relative",
+        width: "100%",
+        aspectRatio: "9 / 16",
+        borderRadius: "20px",
+        overflow: "hidden",
+        backgroundColor: "#0f172a",
+      }}
+    >
+      <iframe
+        src="https://www.youtube.com/embed/tPVOldHzEOk?autoplay=1&mute=1&loop=1&playlist=tPVOldHzEOk&controls=1&rel=0&modestbranding=1"
+        title="YouTube Shorts Player"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowFullScreen
+        style={{
+          width: "100%",
+          height: "100%",
+          border: "none",
+          display: "block",
+        }}
+      />
+    </div>
+  </div>
+</div>
 
 <div style={{width:"100%",backgroundColor:"white",height:"auto",marginTop:"20px"}}>
   <img
