@@ -170,7 +170,7 @@ style={
   />
 <h1 style={{color:"black"}}>ইরেক্টাইল ডিসফাংশন এবং অকাল বীর্যপাতের স্থায়ী সমাধান</h1>
 
-<h1 style={{color:"black",marginTop:"16px",backgroundColor:"#0c4719",margin:"15px",borderRadius:"10px"}}>এক ফাইলেই স্থায়ী সমাধান</h1>
+<h1 style={{color:"black",marginTop:"16px",backgroundColor:"#FFC0CB",margin:"15px",borderRadius:"10px"}}>এক ফাইলেই স্থায়ী সমাধান</h1>
   <button 
   onClick={scroll}
   
