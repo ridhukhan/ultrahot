@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import {dbConnect} from "@/lib/mongodb"; // আপনার MongoDB কানেকশন ফাইলের পাথ ঠিক করে নেবেন
 import DailyView from "@/models/DailyView";
 
-export const dynamic = "force-dynamic"; // Netlify/Next.js ক্যাশ বন্ধ করে রিয়েল-টাইম ডাটা দেবে
+
 
 function getTodayBD() {
   return new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Dhaka" });
