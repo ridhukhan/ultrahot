@@ -44,6 +44,9 @@ export default function Admin() {
               <h1>{item.name}</h1>
               <h1>{item.area}</h1>
               <h1>{item.phone}</h1>
+              <h1>{item.quantity}</h1>
+              <h1>{item.price}</h1>
+
             </div>
           ))
         )}
