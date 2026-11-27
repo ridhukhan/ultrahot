@@ -40,7 +40,7 @@ if(!name || !area || !phone){
 
 }
       const orderData={
-        name,area,phone,quantity,price
+        name,area,phone,quantity,price:quantity*price
       }
       const res =await fetch("/api/order",{
          method: "POST",
