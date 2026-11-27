@@ -26,8 +26,9 @@ orderFormRef.current?.scrollIntoView({
   const [name,setName]=useState("")
   const [area,setArea]=useState("")
   const [phone,setPhone]=useState("")
+  const [quantity,setQuantity]=useState(1)
   const [loading,setLoading]=useState(false)
-
+const price=1250
   const handle=async(e)=>{
     e.preventDefault()
     try {
@@ -39,7 +40,7 @@ if(!name || !area || !phone){
 
 }
       const orderData={
-        name,area,phone
+        name,area,phone,quantity,price
       }
       const res =await fetch("/api/order",{
          method: "POST",
@@ -590,7 +591,38 @@ onSubmit={handle}
       outline: "none",
     }}
   />
+  <div style={{width:"100%",display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
+    <h3 style={{color:"green"}}>পিস</h3>
+    <h3 style={{color:"red"}}>প্রাইস</h3>
+  </div>
+  <div   style={{display:"flex",flexDirection:"row",width:"100%",justifyContent:"space-between"}}>
+< div style={{display:"flex",flexDirection:"row",gap:"14px"}}>
 
+<button 
+
+
+type="button"
+onClick={()=>setQuantity(quantity?quantity+1:quantity)}
+
+ style={{backgroundColor:"red",paddingInline:"17px",borderRadius:"10px",fontWeight:"bold"}}>+</button>
+<h1 style={{color:"#000"}}>
+
+{quantity}
+
+</h1>
+<button 
+
+
+type="button"
+onClick={()=>setQuantity(quantity>1?quantity - 1:1)}
+
+  style={{backgroundColor:"green",paddingInline:"17px",borderRadius:"10px",fontWeight:"bold"}}>-</button>
+</div>
+
+<div>
+<h1 style={{color:"black"}}>{quantity*price}</h1>
+</div>
+</div>
   <button
     type="submit"
     style={{

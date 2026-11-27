@@ -12,6 +12,14 @@ const orderSchema = new mongoose.Schema({
      phone:{
         type:String,
         required:true,
+    },
+     quantity:{
+        type:String,
+        required:true,
+    },
+    price:{
+        type:String,
+        required:true,
     }
 },{timestamps:true})
 export default mongoose.model("Order",orderSchema)

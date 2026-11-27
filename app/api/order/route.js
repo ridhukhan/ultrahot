@@ -8,11 +8,11 @@ export async function POST(req){
     const body= await req.json()
 
     const{
-        name,area,phone
+        name,area,phone,quantity
     }= body
 
     const newOrder = await Order.create({
-        name,area,phone
+        name,area,phone,quantity,price
     })
   return  NextResponse.json(
         { success: true, message: "Order placed successfully!", order: newOrder },
