@@ -6,6 +6,7 @@ export default function Admin() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hoveredId, setHoveredId] = useState(null);
+  const [todayViews, setTodayViews] = useState(0);
 
   async function fetchOrder() {
     try {
@@ -24,8 +25,23 @@ export default function Admin() {
     }
   }
 
+  async function fetchTodayViews() {
+    try {
+      const res = await fetch("/api/views", { cache: "no-store" });
+      const data = await res.json();
+      setTodayViews(data.todayViews || 0);
+    } catch (error) {
+      console.error("Views fetch error:", error);
+    }
+  }
+
   useEffect(() => {
     fetchOrder();
+    fetchTodayViews();
+
+    // প্রতি ৫ সেকেন্ড পরপর রিয়েল-টাইমে Today's View আপডেট হবে
+    const interval = setInterval(fetchTodayViews, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   if (loading) {
@@ -57,6 +73,48 @@ export default function Admin() {
         fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
       }}
     >
+      {/* উপরের ডান কোণায় Today's Views ব্যাজ */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginBottom: "15px",
+        }}
+      >
+        <div
+          style={{
+            backgroundColor: "#ffffff",
+            padding: "10px 18px",
+            borderRadius: "12px",
+            boxShadow: "0 4px 12px rgba(99, 102, 241, 0.12)",
+            border: "1px solid #e2e8f0",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          <span style={{ fontSize: "18px" }}>👁️</span>
+          <span
+            style={{
+              fontSize: "14px",
+              color: "#64748b",
+              fontWeight: "600",
+            }}
+          >
+            Today's Views:
+          </span>
+          <span
+            style={{
+              fontSize: "17px",
+              color: "#4f46e5",
+              fontWeight: "700",
+            }}
+          >
+            {todayViews}
+          </span>
+        </div>
+      </div>
+
       <h2
         style={{
           textAlign: "center",

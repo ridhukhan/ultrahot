@@ -11,6 +11,7 @@ import { FaPen } from "react-icons/fa6";
 import { FaStopwatch } from "react-icons/fa";
 import { SlCalender } from "react-icons/sl";
 import { useRef, useState } from "react";
+import ViewCounter from "./ViewCounter";
 export default function Home() {
 
   const orderFormRef =useRef(null)
@@ -66,7 +67,7 @@ if(!name || !area || !phone){
   }
     return (
     <div style={{backgroundColor:"#458b00",width:"100%",height:"auto",justifyContent:"center",alignItems:"center",textAlign:"center"}}>
-     
+     <ViewCounter />
 <img
 src="/ling1.jpg"
 
