@@ -66,7 +66,7 @@ if(!name || !area || !phone){
     }
   }
     return (
-    <div style={{backgroundColor:"#458b00",width:"100%",height:"auto",justifyContent:"center",alignItems:"center",textAlign:"center"}}>
+    <div style={{backgroundColor:"#D8BFD8",width:"100%",height:"auto",justifyContent:"center",alignItems:"center",textAlign:"center"}}>
      <ViewCounter />
 <img
 src="/ling1.jpg"
