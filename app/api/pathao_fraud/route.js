@@ -16,7 +16,7 @@ async function getPathaoToken() {
       Accept: "application/json",
     },
     body: JSON.stringify({
-      email: process.env.PATHAO_EMAIL,
+      username: process.env.PATHAO_USERNAME,
       password: process.env.PATHAO_PASSWORD,
     }),
   });
