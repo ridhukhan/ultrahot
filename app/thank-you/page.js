@@ -168,7 +168,6 @@ const valStyle = {
   textAlign: "right",
 };
 
-// Next.js App Router-এ useSearchParams ব্যবহার করলে Suspense র‍্যাপার জরুরি (বিল্ড এরর এড়াতে)
 export default function ThankYouPage() {
   return (
     <Suspense fallback={<div style={{ textAlign: "center", padding: "50px" }}>Loading...</div>}>
