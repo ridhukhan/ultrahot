@@ -4,7 +4,7 @@ import { BsLightningCharge } from "react-icons/bs";
 import { GrSecure } from "react-icons/gr";
 import { TbTruckDelivery } from "react-icons/tb";
 import { CiCircleCheck } from "react-icons/ci";
-import { FaChessKing, FaPen, FaStopwatch } from "react-icons/fa";
+import { FaChessKing, FaPen, FaStopwatch, FaStar } from "react-icons/fa";
 import { GiSelfLove } from "react-icons/gi";
 import { FaHourglassStart } from "react-icons/fa6";
 import { SlCalender } from "react-icons/sl";
@@ -12,6 +12,57 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import ViewCounter from "./ViewCounter";
+
+const customerReviews = [
+  {
+    initial: "হ",
+    name: "হাসান",
+    district: "রাজশাহী",
+    review: "এনার্জি লেভেল বেড়েছে, খুবই সন্তুষ্ট প্রোডাক্ট নিয়ে।",
+  },
+  {
+    initial: "জ",
+    name: "জাহিদ",
+    district: "খুলনা",
+    review: "অনেক দিন ধরে খুঁজছিলাম এমন প্রোডাক্ট। অবশেষে পেলাম, ধন্যবাদ!",
+  },
+  {
+    initial: "ক",
+    name: "কামাল",
+    district: "বরিশাল",
+    review: "দারুণ কার্যকর! সত্যিই ভালো ফলাফল পাচ্ছি, সবার জন্য সুপারিশ করছি।",
+  },
+  {
+    initial: "র",
+    name: "রফিকুল ইসলাম",
+    district: "ঢাকা",
+    review: "আলহামদুলিল্লাহ! আমার শারীরিক দুর্বলতা একদম দূর হয়ে গেছে। অসাধারণ প্রোডাক্ট!",
+  },
+  {
+    initial: "ত",
+    name: "তারেক আহমেদ",
+    district: "চট্টগ্রাম",
+    review: "২ দিন ব্যবহারের পর থেকেই ভালো পরিবর্তন বুঝতে পেরেছি। ১০০% অরিজিনাল পণ্য।",
+  },
+  {
+    initial: "ম",
+    name: "মাহমুদুল হক",
+    district: "ময়মনসিংহ",
+    review: "ডেলিভারি খুব ফাস্ট পেয়েছি। প্যাকেট খুলে দেখে পেমেন্ট করেছি। রেজাল্ট চমৎকার!",
+  },
+  {
+    initial: "শ",
+    name: "শামীম ওসমান",
+    district: "নারায়ণগঞ্জ",
+    review: "দাম্পত্য জীবনে নতুন করে আত্মবিশ্বাস ফিরে পেয়েছি। কোন পার্শ্বপ্রতিক্রিয়া অনুভব করিনি।",
+  },
+  {
+    initial: "আ",
+    name: "আরিফুল ইসলাম",
+    district: "রংপুর",
+    review: "স্ট্যামিনা আগের থেকে অনেক বেশি পাই। কাজের ক্লান্তির পরেও সবসময় ফ্রেশ ফিল করি।",
+  },
+];
 
 export default function Home() {
   const router = useRouter();
@@ -61,7 +112,6 @@ export default function Home() {
       if (resdata.success) {
         toast.success("অভিনন্দন! আপনার অর্ডারটি সফলভাবে গৃহীত হয়েছে 🎉");
 
-        // Thank You পেজে ডাটা পাঠানোর জন্য URL Query ব্যবহার করা হলো
         const params = new URLSearchParams({
           name,
           area,
@@ -105,6 +155,9 @@ export default function Home() {
         }
         .cta-btn:hover {
           filter: brightness(1.06);
+        }
+        .review-track:hover {
+          animation-play-state: paused !important;
         }
       `}</style>
 
@@ -319,7 +372,78 @@ export default function Home() {
           </button>
         </section>
 
-        {/* ৭. অর্ডার ফর্ম সেকশন */}
+        {/* ৭. সার্টিফিকেট ও মান নিয়ন্ত্রণ সেকশন */}
+        <section style={styles.certSection}>
+          <div style={styles.certBadge}>🛡️ ল্যাব টেস্টেড ও অনুমোদিত</div>
+          <h2 style={styles.darkHeading}>সার্টিফিকেট ও মান নিয়ন্ত্রণ</h2>
+          <p style={styles.certSub}>আমাদের প্রোডাক্ট সার্টিফাইড এবং মানসম্পন্ন</p>
+
+          <div style={styles.certImageWrapper}>
+            <img
+              src="https://res.cloudinary.com/dfzaefrkt/image/upload/v1795813746/ChatGPT-Image-Jun-23-2026-06_40_40-PM-2-725x1024-1_stbksj.webp"
+              alt="সার্টিফিকেট ও মান নিয়ন্ত্রণ"
+              style={styles.certImage}
+            />
+          </div>
+        </section>
+
+        {/* ৮. কাস্টমার রিভিউ সেকশন (Right-to-Left Auto Scroll) */}
+        <section style={styles.reviewSection}>
+          <div style={styles.reviewBadge}>⭐ ১০০০+ সন্তুষ্ট গ্রাহকের মতামত</div>
+          <h2 style={styles.darkHeading}>সম্মানিত ক্রেতাদের রিভিউ</h2>
+          <p style={{ color: "#475569", fontSize: "14px", marginBottom: "20px" }}>
+            সারা বাংলাদেশ থেকে আমাদের গ্রাহকদের বাস্তব অভিজ্ঞতা
+          </p>
+
+          {/* ইনফিনিট ডান-থেকে-বাম স্ক্রলিং কন্টেইনার */}
+          <div style={{ overflow: "hidden", width: "100%", padding: "8px 0" }}>
+            <div
+              className="review-track"
+              style={{
+                display: "flex",
+                gap: "16px",
+                width: "max-content",
+                animation: "scrollLeft 32s linear infinite",
+              }}
+            >
+              {/* স্মুথ লুপের জন্য অ্যারেটি ২ বার ম্যাপ করা হয়েছে */}
+              {[...customerReviews, ...customerReviews].map((item, idx) => (
+                <div key={idx} style={styles.reviewCard}>
+                  {/* উপরের অংশ: অ্যাভাটার, নাম, জেলা ও ৫ স্টার */}
+                  <div style={styles.reviewHeader}>
+                    <div style={styles.avatarCircle}>{item.initial}</div>
+
+                    <div style={{ textAlign: "left", flex: 1 }}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
+                        <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "#0f172a" }}>
+                          {item.name}
+                        </h4>
+                        {/* ৫ স্টার রেটিং */}
+                        <div style={{ display: "flex", gap: "2px", color: "#f59e0b" }}>
+                          <FaStar size={13} />
+                          <FaStar size={13} />
+                          <FaStar size={13} />
+                          <FaStar size={13} />
+                          <FaStar size={13} />
+                        </div>
+                      </div>
+                      <span style={styles.districtTag}>📍 {item.district} • Verified Buyer</span>
+                    </div>
+                  </div>
+
+                  {/* রিভিউ টেক্সট */}
+                  <p style={styles.reviewText}>"{item.review}"</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button onClick={scroll} className="cta-btn" style={styles.primaryCta}>
+            🛒 অর্ডার করতে ক্লিক করুন
+          </button>
+        </section>
+
+        {/* ৯. অর্ডার ফর্ম সেকশন */}
         <section ref={orderFormRef} style={styles.formSection}>
           <div style={styles.formHeaderBanner}>
             অর্ডার করতে নিচের ফরমটি সঠিক তথ্য দিয়ে পূরণ করুন
@@ -581,7 +705,7 @@ const styles = {
     fontWeight: "800",
     color: "#0f172a",
     lineHeight: "1.4",
-    marginBottom: "14px",
+    marginBottom: "10px",
   },
   highlightBanner: {
     backgroundColor: "#ffe4e6",
@@ -700,6 +824,112 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
   },
+  /* সার্টিফিকেট সেকশন CSS */
+  certSection: {
+    padding: "36px 20px",
+    textAlign: "center",
+    background: "linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%)",
+    borderTop: "1px solid #e2e8f0",
+  },
+  certBadge: {
+    display: "inline-block",
+    backgroundColor: "#e0e7ff",
+    color: "#4338ca",
+    padding: "5px 14px",
+    borderRadius: "999px",
+    fontSize: "13px",
+    fontWeight: "700",
+    marginBottom: "10px",
+  },
+  certSub: {
+    color: "#475569",
+    fontSize: "15px",
+    fontWeight: "600",
+    marginBottom: "22px",
+  },
+  certImageWrapper: {
+    maxWidth: "360px",
+    margin: "0 auto",
+    padding: "6px",
+    borderRadius: "20px",
+    background: "linear-gradient(135deg, #f59e0b, #10b981, #3b82f6)",
+    boxShadow: "0 18px 36px rgba(15, 23, 42, 0.16)",
+  },
+  certImage: {
+    width: "100%",
+    height: "auto",
+    borderRadius: "15px",
+    display: "block",
+    backgroundColor: "#ffffff",
+  },
+  /* কাস্টমার রিভিউ সেকশন CSS */
+  reviewSection: {
+    padding: "36px 0",
+    textAlign: "center",
+    backgroundColor: "#ffffff",
+    borderTop: "1px solid #e2e8f0",
+  },
+  reviewBadge: {
+    display: "inline-block",
+    backgroundColor: "#fef3c7",
+    color: "#b45309",
+    padding: "5px 14px",
+    borderRadius: "999px",
+    fontSize: "13px",
+    fontWeight: "700",
+    marginBottom: "10px",
+  },
+  reviewCard: {
+    width: "290px",
+    backgroundColor: "#f8fafc",
+    border: "1.5px solid #e2e8f0",
+    borderRadius: "18px",
+    padding: "18px",
+    boxShadow: "0 8px 20px rgba(15, 23, 42, 0.06)",
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
+    textAlign: "left",
+    flexShrink: 0,
+  },
+  reviewHeader: {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+  },
+  avatarCircle: {
+    width: "42px",
+    height: "42px",
+    borderRadius: "50%",
+    background: "linear-gradient(135deg, #059669 0%, #10b981 100%)",
+    color: "#ffffff",
+    fontWeight: "800",
+    fontSize: "18px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+    boxShadow: "0 4px 10px rgba(5, 150, 105, 0.25)",
+  },
+  districtTag: {
+    fontSize: "12px",
+    color: "#059669",
+    fontWeight: "600",
+    display: "block",
+    marginTop: "2px",
+  },
+  reviewText: {
+    margin: 0,
+    fontSize: "14px",
+    lineHeight: "1.55",
+    color: "#334155",
+    fontWeight: "500",
+    backgroundColor: "#ffffff",
+    padding: "12px",
+    borderRadius: "12px",
+    border: "1px solid #f1f5f9",
+  },
+  /* অর্ডার ফর্ম CSS */
   formSection: {
     backgroundColor: "#f8fafc",
     padding: "28px 16px 40px",
